@@ -4,9 +4,9 @@
   "description": "TaskTracker is an application that allows users to manage tasks, track time, and monitor progress.",
   "main": "index.js",
   "scripts": {
-  "test": "echo \"Error: no test specified\" && exit 1",
-  "start:dev": "nodemon ./src/index.js\"",
-  "start": "node ./src/index.js"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:dev": "nodemon ./src/index.js\"",
+    "start": "node ./src/index.js"
   },
   "repository": {
     "type": "git",
@@ -22,6 +22,7 @@
   "dependencies": {
     "@sequelize/validator.js": "^7.0.0-alpha.46",
     "dotenv": "^17.2.0",
+    "envalid": "^8.1.0",
     "express": "^5.1.0",
     "pg": "^8.16.3"
   },

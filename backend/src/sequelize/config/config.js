@@ -1,10 +1,13 @@
+const env = require('../../env');
+
+console.log(env);
 module.exports = {
   development: {
-    username: "postgres",
-    password: "admin",
-    database: "task_tracker",
-    url: "postgresql://postgres:admin@127.0.0.1:5432/task_tracker",
-    dialect: "postgres",
+    username: env.DB_USER,
+    password: env.DB_PASSWORD,
+    database: env.DB_NAME,
+    url: env.DB_URL,
+    dialect: 'postgres',
   },
   test: {
     username: "root",
@@ -20,16 +23,10 @@ module.exports = {
     }
   },
   production: {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    url: process.env.DB_URL,
+    username: env.DB_USER,
+    password: env.DB_PASSWORD,
+    database: env.DB_NAME,
+    url: env.DB_URL,
     dialect: 'postgres',
-    dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false,
-      },
-    }
   }
 };
