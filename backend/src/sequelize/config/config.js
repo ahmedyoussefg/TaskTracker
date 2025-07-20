@@ -3,7 +3,7 @@ module.exports = {
     username: "postgres",
     password: "admin",
     database: "task_tracker",
-    url: "127.0.0.1",
+    url: "postgresql://postgres:admin@127.0.0.1:5432/task_tracker",
     dialect: "postgres",
   },
   test: {
