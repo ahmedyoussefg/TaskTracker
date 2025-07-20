@@ -1,15 +1,14 @@
 const express = require('express');
-const dotenv = require('dotenv');
+const env = require('./env');
 
 const { sequelize } = require('./sequelize/models');
 
-dotenv.config();
 
 const app = express();
 
 app.use(express.json());
 
-const PORT = process.env.PORT || 3000;
+const PORT = env.PORT || 3000;
 
 const connectDB = async() => {
   console.log("[INFO] Checking database connection...");
