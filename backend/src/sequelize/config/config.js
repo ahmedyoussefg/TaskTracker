@@ -1,13 +1,12 @@
-const env = require('../../env');
+const env = require("../../env");
 
-console.log(env);
 module.exports = {
   development: {
     username: env.DB_USER,
     password: env.DB_PASSWORD,
     database: env.DB_NAME,
     url: env.DB_URL,
-    dialect: 'postgres',
+    dialect: "postgres",
   },
   test: {
     username: "root",
@@ -20,13 +19,13 @@ module.exports = {
         require: true,
         rejectUnauthorized: false,
       },
-    }
+    },
   },
   production: {
     username: env.DB_USER,
     password: env.DB_PASSWORD,
     database: env.DB_NAME,
     url: env.DB_URL,
-    dialect: 'postgres',
-  }
+    dialect: "postgres",
+  },
 };
