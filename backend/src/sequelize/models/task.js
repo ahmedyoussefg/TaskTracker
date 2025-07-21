@@ -1,8 +1,6 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
-const { Sequelize } = require('.');
+"use strict";
+const { Model } = require("sequelize");
+
 module.exports = (sequelize, DataTypes) => {
   class Task extends Model {
     /**
@@ -12,27 +10,30 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.belongsTo(models.User,{foreignKey: 'user_id'});
-      this.hasOne(models.TaskLog, {foreignKey:'task_id'});
+      this.belongsTo(models.User, { foreignKey: "user_id" });
+      this.hasOne(models.TaskLog, { foreignKey: "task_id" });
     }
   }
-  Task.init({
-    id: {
-        type:DataTypes.INTEGER,
+  Task.init(
+    {
+      id: {
+        type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
+      },
+      user_id: DataTypes.INTEGER,
+      description: DataTypes.STRING,
+      title: DataTypes.STRING,
+      estimate: DataTypes.INTEGER,
+      due_date: DataTypes.DATE,
+      priority: DataTypes.ENUM("low", "medium", "high"),
+      status: DataTypes.ENUM("todo", "in_progress", "done"),
     },
-    user_id : DataTypes.INTEGER,
-    description: DataTypes.STRING,
-    title: DataTypes.STRING,
-    estimate: DataTypes.INTEGER,
-    due_date: DataTypes.DATE,
-    priority: DataTypes.ENUM('low','medium','high'),
-    status: DataTypes.ENUM('todo','in_progress','done')
-  }, {
-    sequelize,
-    modelName: 'Task',
-    underscored: true,
-  });
+    {
+      sequelize,
+      modelName: "Task",
+      underscored: true,
+    }
+  );
   return Task;
 };
