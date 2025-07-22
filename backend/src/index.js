@@ -1,12 +1,13 @@
 const express = require("express");
 const env = require("./env");
+const users = require("./routes/users");
 
 const { sequelize } = require("./sequelize/models");
 
 const app = express();
-
 app.use(express.json());
 
+app.use("/api/users", users);
 const PORT = env.PORT || 3000;
 
 const connectDB = async () => {
