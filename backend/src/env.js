@@ -13,6 +13,7 @@ const env = cleanEnv(process.env, {
   DB_NAME: str({ default: "task_tracker" }),
   DB_USER: str({ default: "postgres" }),
   DB_PASSWORD: str({ default: "admin" }),
+  JWT_KEY: str(),
 });
 
 module.exports = env;
