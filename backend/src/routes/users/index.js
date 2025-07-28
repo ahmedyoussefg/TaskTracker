@@ -71,8 +71,6 @@ router.post("/login", async (req, res) => {
     const token = jwt.sign(
       {
         id: loggingUser.id,
-        email: loggingUser.email,
-        username: loggingUser.username,
       },
       env.JWT_KEY,
       {
