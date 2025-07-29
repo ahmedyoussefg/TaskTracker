@@ -71,12 +71,33 @@ router.get("/:id", authenticateToken, async (req, res) => {
       return res.status(404).json({ error: "Task not found." });
     }
 
-    res.json(task);
+    res.status(200).json(task);
   } catch (err) {
     console.error("[ERROR] Get Task by ID:", err.message);
     res.status(500).json({ error: "Internal server error." });
   }
 });
 
+// Delete a task by ID
+router.delete("/:id", authenticateToken, async (req, res) => {
+  try {
+    const deletedCount = await Task.destroy({
+      where: {
+        id: req.params.id,
+      },
+    });
+
+    if (deletedCount === 0) {
+      return res
+        .status(404)
+        .json({ error: "Task not found." });
+    }
+
+    res.status(204).send();
+  } catch (err) {
+    console.error("[ERROR] Delete Task:", err.message);
+    res.status(500).json({ error: "Internal server error." });
+  }
+});
 
 module.exports = router;
