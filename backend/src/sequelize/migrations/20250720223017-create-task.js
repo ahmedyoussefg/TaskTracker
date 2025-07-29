@@ -7,10 +7,10 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.BIGINT,
       },
       user_id: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.BIGINT,
         references: {
           model: "users",
           key: "id",
@@ -24,7 +24,7 @@ module.exports = {
         type: Sequelize.STRING,
       },
       estimate: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.FLOAT,
       },
       due_date: {
         type: Sequelize.DATE,

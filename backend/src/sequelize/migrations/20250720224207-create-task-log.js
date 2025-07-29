@@ -7,10 +7,10 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.BIGINT,
       },
       task_id: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.BIGINT,
         references: {
           model: "tasks",
           key: "id",
@@ -20,7 +20,7 @@ module.exports = {
         type: Sequelize.DATE,
       },
       duration: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.FLOAT,
       },
       created_at: {
         allowNull: false,

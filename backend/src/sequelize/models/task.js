@@ -17,16 +17,16 @@ module.exports = (sequelize, DataTypes) => {
   Task.init(
     {
       id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.BIGINT,
         primaryKey: true,
         autoIncrement: true,
       },
       user_id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.BIGINT,
         allowNull: false,
         validate: {
           notNull: { msg: "User ID is required." },
-          isInt: { msg: "User ID must be an integer." },
+          isInt: { msg: "User ID must be a number." },
         },
       },
       title: {
@@ -42,10 +42,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       estimate: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.FLOAT,
         allowNull: true,
         validate: {
-          isInt: { msg: "Estimate must be an integer." },
+          isFloat: { msg: "Estimate must be a float." },
         },
       },
       due_date: {
