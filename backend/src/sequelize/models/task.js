@@ -17,14 +17,14 @@ module.exports = (sequelize, DataTypes) => {
   Task.init(
     {
       id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.BIGINT,
         primaryKey: true,
         autoIncrement: true,
       },
-      user_id: DataTypes.INTEGER,
+      user_id: DataTypes.BIGINT,
       description: DataTypes.STRING,
       title: DataTypes.STRING,
-      estimate: DataTypes.INTEGER,
+      estimate: DataTypes.FLOAT,
       due_date: DataTypes.DATE,
       priority: DataTypes.ENUM("low", "medium", "high"),
       status: DataTypes.ENUM("todo", "in_progress", "done"),
