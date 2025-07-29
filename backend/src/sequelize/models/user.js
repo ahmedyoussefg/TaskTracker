@@ -67,14 +67,6 @@ module.exports = (sequelize, DataTypes) => {
       underscored: true,
       hooks: {
         beforeCreate: async (user) => {
-          // store email lowercase
-          if (user.email) {
-            user.email = user.email.toLowerCase();
-          }
-          // store username lowercase
-          if (user.username) {
-            user.username = user.username.toLowerCase();
-          }
           if (user.password) {
             // hash password
             const salt = await bcrypt.genSalt();
