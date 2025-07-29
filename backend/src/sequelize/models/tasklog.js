@@ -15,13 +15,13 @@ module.exports = (sequelize, DataTypes) => {
   TaskLog.init(
     {
       id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.BIGINT,
         primaryKey: true,
         autoIncrement: true,
       },
-      task_id: DataTypes.INTEGER,
+      task_id: DataTypes.BIGINT,
       day: DataTypes.DATE,
-      duration: DataTypes.INTEGER,
+      duration: DataTypes.FLOAT,
     },
     {
       sequelize,
