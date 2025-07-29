@@ -2,33 +2,48 @@ const authenticateToken = require("../../middlewares/auth");
 const { sequelize } = require("../../sequelize/models");
 const express = require("express");
 const router = express.Router();
+const { body, validationResult } = require("express-validator");
 
 const Task = sequelize.models.Task;
 
 // Create Task
-router.post("/", authenticateToken, async (req, res) => {
-  const { title, description, estimate, due_date, priority, status } = req.body;
-  if (!title) {
-    return res.status(400).json({ error: "Title is required." });
-  }
+router.post(
+  "/",
+  authenticateToken,
+  [
+    body("title")
+      .notEmpty()
+      .withMessage("Title is required.")
+      .isString()
+      .withMessage("Title must be a string."),
+  ],
+  async (req, res) => {
+    const { title, description, estimate, due_date, priority, status } =
+      req.body;
 
-  try {
-    const task = await Task.create({
-      user_id: req.currentUser.id,
-      title: title,
-      description:description,
-      estimate:estimate,
-      due_date:due_date,
-      priority:priority,
-      status:status,
-    });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    
+    try {
+      const task = await Task.create({
+        user_id: req.currentUser.id,
+        title: title,
+        description: description,
+        estimate: estimate,
+        due_date: due_date,
+        priority: priority,
+        status: status,
+      });
 
-    res.status(201).json(task);
-  } catch (err) {
-    console.error("[ERROR] Create Task:", err.message);
-    res.status(500).json({ error: "Internal server error." });
+      res.status(201).json(task);
+    } catch (err) {
+      console.error("[ERROR] Create Task:", err.message);
+      res.status(500).json({ error: "Internal server error." });
+    }
   }
-});
+);
 
 // Get all tasks of the user
 router.get("/", authenticateToken, async (req, res) => {
