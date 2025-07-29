@@ -1,4 +1,4 @@
-const { Op } = require("sequelize");
+const { Op, fn, col, where } = require("sequelize");
 const { sequelize } = require("../../sequelize/models");
 const express = require("express");
 const router = express.Router();
@@ -82,7 +82,10 @@ router.post(
       // find user where email = identifier or username = identifier
       const loggingUser = await User.findOne({
         where: {
-          [Op.or]: [{ email: identifier }, { username: identifier }],
+          [Op.or]: [
+            { email: identifier },
+            where(fn("lower", col("username")), identifier.toLowerCase()),
+          ],
         },
       });
 
