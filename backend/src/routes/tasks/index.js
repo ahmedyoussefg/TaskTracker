@@ -58,4 +58,25 @@ router.get("/", authenticateToken, async (req, res) => {
   }
 });
 
+// Get a specific task by ID
+router.get("/:id", authenticateToken, async (req, res) => {
+  try {
+    const task = await Task.findOne({
+      where: {
+        id: req.params.id,
+      },
+    });
+
+    if (!task) {
+      return res.status(404).json({ error: "Task not found." });
+    }
+
+    res.json(task);
+  } catch (err) {
+    console.error("[ERROR] Get Task by ID:", err.message);
+    res.status(500).json({ error: "Internal server error." });
+  }
+});
+
+
 module.exports = router;
