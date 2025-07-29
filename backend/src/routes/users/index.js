@@ -95,25 +95,26 @@ router.post(
 
       const isMatch = await bcrypt.compare(password, loggingUser.password);
 
-    if (!isMatch) {
-      return res.status(401).json({ error: "Invalid credentials." });
-    }
-    const token = jwt.sign(
-      {
-        id: loggingUser.id,
-      },
-      env.JWT_KEY,
-      {
-        expiresIn: "1h",
+      if (!isMatch) {
+        return res.status(401).json({ error: "Invalid credentials." });
       }
-    );
-    res
-      .status(201)
-      .json({ msg: "User authentication is successful.", token: token });
-  } catch (err) {
-    console.error("[ERROR] Login error:", err.message);
-    res.status(500).json({ error: "Internal server error." });
+      const token = jwt.sign(
+        {
+          id: loggingUser.id,
+        },
+        env.JWT_KEY,
+        {
+          expiresIn: "1h",
+        }
+      );
+      res
+        .status(201)
+        .json({ msg: "User authentication is successful.", token: token });
+    } catch (err) {
+      console.error("[ERROR] Login error:", err.message);
+      res.status(500).json({ error: "Internal server error." });
+    }
   }
-});
+);
 
 module.exports = router;

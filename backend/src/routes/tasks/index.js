@@ -25,7 +25,7 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    
+
     try {
       const task = await Task.create({
         user_id: req.currentUser.id,
