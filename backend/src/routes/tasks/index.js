@@ -88,14 +88,44 @@ router.delete("/:id", authenticateToken, async (req, res) => {
     });
 
     if (deletedCount === 0) {
-      return res
-        .status(404)
-        .json({ error: "Task not found." });
+      return res.status(404).json({ error: "Task not found." });
     }
 
     res.status(204).send();
   } catch (err) {
     console.error("[ERROR] Delete Task:", err.message);
+    res.status(500).json({ error: "Internal server error." });
+  }
+});
+
+// Update a task by ID
+router.patch("/:id", authenticateToken, async (req, res) => {
+  const { title, description, estimate, due_date, priority, status } = req.body;
+
+  try {
+    const task = await Task.findOne({
+      where: {
+        id: req.params.id,
+      },
+    });
+
+    if (!task) {
+      return res.status(404).json({ error: "Task not found." });
+    }
+
+    // Only update the provided fields
+    await task.update({
+      title: title ?? task.title,
+      description: description ?? task.description,
+      estimate: estimate ?? task.estimate,
+      due_date: due_date ?? task.due_date,
+      priority: priority ?? task.priority,
+      status: status ?? task.status,
+    });
+
+    res.status(200).json(task);
+  } catch (err) {
+    console.error("[ERROR] Update Task:", err.message);
     res.status(500).json({ error: "Internal server error." });
   }
 });
