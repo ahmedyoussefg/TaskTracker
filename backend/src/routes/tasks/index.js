@@ -65,6 +65,26 @@ router.get("/:id", authenticateToken, async (req, res) => {
     const task = await Task.findOne({
       where: {
         id: req.params.id,
+        user_id: req.currentUser.id,
+      },
+      include: [
+        {
+          model: TaskLog,
+          attributes: ["day", "duration"],
+          as: "taskLogs",
+        },
+      ],
+      attributes: {
+        include: [
+          [
+            sequelize.literal(`(
+          SELECT COALESCE(SUM("duration"), 0)
+          FROM "tasklogs"
+          WHERE "tasklogs"."task_id" = "Task"."id"
+        )`),
+            "totalLoggedTime",
+          ],
+        ],
       },
     });
 
