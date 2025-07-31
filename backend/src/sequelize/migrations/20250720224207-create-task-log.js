@@ -15,11 +15,14 @@ module.exports = {
           model: "tasks",
           key: "id",
         },
+        onDelete: "CASCADE",
       },
       day: {
-        type: Sequelize.DATE,
+        allowNull: false,
+        type: Sequelize.DATEONLY,
       },
       duration: {
+        allowNull: false,
         type: Sequelize.FLOAT,
       },
       created_at: {
