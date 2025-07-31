@@ -3,11 +3,9 @@ import { useNavigate } from "react-router-dom";
 import config from "../apis/config";
 import axios from "axios";
 
-const SignUp = () => {
+const Login = () => {
   const [formData, setFormData] = useState({
-    username: "",
-    display_name: "",
-    email: "",
+    identifier: "", // could be email or username
     password: "",
   });
   const [error, setError] = useState("");
@@ -23,40 +21,29 @@ const SignUp = () => {
     setSuccess("");
   };
 
-  const isPasswordStrong = (pwd) => /^(?=.*[A-Z])(?=.*\d).{8,}$/.test(pwd);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
-
-    if (!isPasswordStrong(formData.password)) {
-      setError(
-        "Password must be 8+ characters, include an uppercase letter and a number."
-      );
-      return;
-    }
-
     setLoading(true);
+
     try {
       const res = await axios.post(
-        `${config.BASE_API_URL}/users/sign-up`,
+        `${config.BASE_API_URL}/users/login`,
         formData
       );
 
       if (res.status >= 200 && res.status < 300) {
-        const userToken = res.data.token;
-        localStorage.setItem("token", userToken);
-        setSuccess("Sign-up successful! Redirecting...");
+        const token = res.data.token;
+        localStorage.setItem("token", token);
+        setSuccess("Login successful! Redirecting...");
         setTimeout(() => navigate("/dashboard"), 1500);
       } else {
-        const { message } = res.data.message;
-        setError(`${message || "Sign-up failed. Try again."}`);
+        setError("Login failed. Please check your credentials.");
       }
     } catch (err) {
       console.error(err);
-      // Show backend message if available
-      if (err.response && err.response.data && err.response.data.error) {
+      if (err.response?.data?.error) {
         setError(`${err.response.data.error}`);
       } else {
         setError("Network error. Please try again later.");
@@ -72,45 +59,24 @@ const SignUp = () => {
         className="card shadow-lg p-4"
         style={{ maxWidth: "500px", width: "100%" }}
       >
-        <h3 className="text-center mb-4">Create Your Account</h3>
+        <h3 className="text-center mb-4">Log In</h3>
 
         {error && <div className="alert alert-danger">{error}</div>}
         {success && <div className="alert alert-success">{success}</div>}
 
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
-            <label className="form-label">Display Name</label>
+            <label className="form-label">Email or Username</label>
             <input
               type="text"
-              name="display_name"
+              name="identifier"
               className="form-control"
-              value={formData.display_name}
+              value={formData.identifier}
               onChange={handleChange}
               required
             />
           </div>
-          <div className="mb-3">
-            <label className="form-label">Username</label>
-            <input
-              type="text"
-              name="username"
-              className="form-control"
-              value={formData.username}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <label className="form-label">Email</label>
-            <input
-              type="email"
-              name="email"
-              className="form-control"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
+
           <div className="mb-3">
             <label className="form-label">Password</label>
             <div className="input-group">
@@ -131,20 +97,18 @@ const SignUp = () => {
                 {showPassword ? "Hide" : "Show"}
               </button>
             </div>
-            <div className="form-text">
-              Use 8+ characters, one uppercase letter, and one number.
-            </div>
           </div>
+
           <button
             type="submit"
             className="btn btn-primary w-100"
             disabled={loading}
           >
-            {loading ? "Creating Account..." : "Sign Up"}
+            {loading ? "Logging in..." : "Log In"}
           </button>
         </form>
         <div className="text-center mt-3">
-          <span>Already registered? </span>
+          <span>Don't have an account? </span>
           <button
             type="button"
             className="btn p-0"
@@ -154,9 +118,9 @@ const SignUp = () => {
               color: "#0d6efd",
               textDecoration: "none",
             }}
-            onClick={() => navigate("/login")}
+            onClick={() => navigate("/signup")}
           >
-            Sign In
+            Sign Up
           </button>
         </div>
       </div>
@@ -164,4 +128,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default Login;
