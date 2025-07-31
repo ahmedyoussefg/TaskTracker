@@ -20,6 +20,7 @@ module.exports = {
         type: Sequelize.STRING,
       },
       title: {
+        allowNull: false,
         type: Sequelize.STRING,
       },
       estimate: {
@@ -29,10 +30,12 @@ module.exports = {
         type: Sequelize.DATE,
       },
       priority: {
+        allowNull: false,
         type: Sequelize.ENUM("low", "medium", "high"),
       },
       status: {
-        type: Sequelize.ENUM("low", "medium", "high"),
+        allowNull: false,
+        type: Sequelize.ENUM("todo", "in_progress", "done"),
       },
       created_at: {
         allowNull: false,
