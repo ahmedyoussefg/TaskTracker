@@ -43,13 +43,13 @@ const SignUp = () => {
         formData
       );
 
-      if (res.status >= 200 && res.status < 300) { 
-        const user = res.data;
-        localStorage.setItem("userInfo", JSON.stringify(user));
+      if (res.status >= 200 && res.status < 300) {
+        const userToken = res.data.token;
+        localStorage.setItem("token", userToken);
         setSuccess("Sign-up successful! Redirecting...");
         setTimeout(() => navigate("/dashboard"), 1500);
       } else {
-        const { message } = res.data
+        const { message } = res.data.message;
         setError(`${message || "Sign-up failed. Try again."}`);
       }
     } catch (err) {
