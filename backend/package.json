@@ -4,7 +4,7 @@
   "description": "TaskTracker is an application that allows users to manage tasks, track time, and monitor progress.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "cross-env NODE_ENV=test jest --runInBand",
     "start:dev": "nodemon ./src/index.js\"",
     "start": "node ./src/index.js",
     "lint": "eslint",
@@ -48,11 +48,14 @@
     "@babel/register": "^7.27.1",
     "@eslint/js": "^9.31.0",
     "babel-loader": "^9.2.1",
+    "cross-env": "^10.0.0",
     "eslint": "^9.31.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.3",
     "globals": "^16.3.0",
+    "jest": "^30.0.5",
     "nodemon": "^3.1.10",
-    "prettier": "3.6.2"
+    "prettier": "3.6.2",
+    "supertest": "^7.1.4"
   }
 }
