@@ -6,6 +6,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const env = require("../../env");
 const { body, validationResult } = require("express-validator");
+const { logger } = require("../../logger");
 
 const User = sequelize.models.User;
 
@@ -55,7 +56,10 @@ router.post(
         });
       }
 
-      console.error("[ERROR] Sign up error:", err.message);
+      logger.error("Sign up error", {
+        message: err.message,
+        stack: err.stack,
+      });
       res.status(500).json({ error: "Internal server error." });
     }
   }
@@ -118,7 +122,10 @@ router.post(
         .status(201)
         .json({ msg: "User authentication is successful.", token: token });
     } catch (err) {
-      console.error("[ERROR] Login error:", err.message);
+      logger.error("Login error", {
+        message: err.message,
+        stack: err.stack,
+      });
       res.status(500).json({ error: "Internal server error." });
     }
   }

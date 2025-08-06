@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const env = require("../env");
 const { sequelize } = require("../sequelize/models");
+const { logger } = require("../logger");
 
 const User = sequelize.models.User;
 
@@ -19,7 +20,10 @@ async function authenticateToken(req, res, next) {
     req.currentUser = currentUser;
     next();
   } catch (err) {
-    console.error("[ERROR] JWT verification: ", err.message);
+    logger.error("JWT verification failed", {
+      message: err.message,
+      stack: err.stack,
+    });
     return res.status(403).json({ error: "Invalid or expired token." });
   }
 }
