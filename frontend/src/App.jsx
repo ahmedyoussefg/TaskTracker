@@ -9,9 +9,10 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { useAuth } from "./contexts/useAuth";
 import { useEffect } from "react";
 import { injectLogoutHandler } from "./apis/axios";
+import { PublicHeader } from "./components/PublicHeader";
 
 function App() {
-  const { logout } = useAuth();
+  const { logout, isAuthenticated } = useAuth();
 
   useEffect(() => {
     injectLogoutHandler(logout);
@@ -19,7 +20,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Header />
+      {isAuthenticated ? <Header /> : <PublicHeader />}
       <Routes>
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
