@@ -51,7 +51,27 @@ router.get("/", authenticateToken, async (req, res) => {
   try {
     const tasks = await Task.findAll({
       where: { user_id: req.currentUser.id },
+      include: [
+        {
+          model: TaskLog,
+          attributes: ["day", "duration"],
+          as: "taskLogs",
+        },
+      ],
+      attributes: {
+        include: [
+          [
+            sequelize.literal(`(
+          SELECT COALESCE(SUM("duration"), 0)
+          FROM "tasklogs"
+          WHERE "tasklogs"."task_id" = "Task"."id"
+        )`),
+            "totalLoggedTime",
+          ],
+        ],
+      },
     });
+
     res.json(tasks);
   } catch (err) {
     console.error("[ERROR] Get Tasks:", err.message);
