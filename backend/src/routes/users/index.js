@@ -26,14 +26,21 @@ router.post(
     }
 
     try {
-      await User.create({
+      const newUser = await User.create({
         display_name,
         email,
         password,
         username,
       });
 
-      res.status(201).json({ message: "User created successfully." });
+      const token = jwt.sign({ id: newUser.id }, env.JWT_KEY, {
+        expiresIn: "1h",
+      });
+
+      res.status(201).json({
+        message: "User created successfully.",
+        token,
+      });
     } catch (err) {
       if (err.name === "SequelizeUniqueConstraintError") {
         return res.status(409).json({
