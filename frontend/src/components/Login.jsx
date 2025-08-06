@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import config from "../apis/config";
-import axios from "axios";
+import api from "../apis/axios";
+import { useAuth } from "../contexts/useAuth";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +12,7 @@ const Login = () => {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const { login } = useAuth();
 
   const navigate = useNavigate();
 
@@ -28,15 +29,13 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post(
-        `${config.BASE_API_URL}/users/login`,
-        formData
-      );
+      const res = await api.post(`/users/login`, formData);
 
       if (res.status >= 200 && res.status < 300) {
         const token = res.data.token;
         localStorage.setItem("token", token);
         setSuccess("Login successful! Redirecting...");
+        login(token);
         setTimeout(() => navigate("/dashboard"), 1500);
       } else {
         setError("Login failed. Please check your credentials.");
