@@ -40,10 +40,7 @@ const SignUp = () => {
 
     setLoading(true);
     try {
-      const res = await api.post(
-        `/users/sign-up`,
-        formData
-      );
+      const res = await api.post(`/users/sign-up`, formData);
 
       if (res.status >= 200 && res.status < 300) {
         const userToken = res.data.token;
@@ -81,8 +78,11 @@ const SignUp = () => {
 
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
-            <label className="form-label">Display Name</label>
+            <label htmlFor="display_name" className="form-label">
+              Display Name
+            </label>
             <input
+              id="display_name"
               type="text"
               name="display_name"
               className="form-control"
@@ -92,9 +92,12 @@ const SignUp = () => {
             />
           </div>
           <div className="mb-3">
-            <label className="form-label">Username</label>
+            <label htmlFor="username" className="form-label">
+              Username
+            </label>
             <input
               type="text"
+              id="username"
               name="username"
               className="form-control"
               value={formData.username}
@@ -103,9 +106,12 @@ const SignUp = () => {
             />
           </div>
           <div className="mb-3">
-            <label className="form-label">Email</label>
+            <label htmlFor="email" className="form-label">
+              Email
+            </label>
             <input
               type="email"
+              id="email"
               name="email"
               className="form-control"
               value={formData.email}
@@ -114,10 +120,11 @@ const SignUp = () => {
             />
           </div>
           <div className="mb-3">
-            <label className="form-label">Password</label>
+            <label htmlFor="password" className="form-label">Password</label>
             <div className="input-group">
               <input
                 type={showPassword ? "text" : "password"}
+                id="password"
                 name="password"
                 className="form-control"
                 value={formData.password}
