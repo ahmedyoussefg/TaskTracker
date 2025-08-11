@@ -6,9 +6,14 @@ const cors = require("cors");
 const { logger, errorLogger, requestLogger } = require("./logger");
 
 const { sequelize } = require("./sequelize/models");
+const swaggerDocs = require("./swagger");
 
 const app = express();
+const PORT = env.PORT || 3000;
+
 app.use(cors({ origin: "http://localhost:5173" }));
+
+swaggerDocs(app, PORT);
 app.use(express.json());
 
 if (process.env.NODE_ENV !== "production") {
@@ -19,8 +24,6 @@ app.use("/api/users", users);
 app.use("/api/tasks", tasks);
 
 app.use(errorLogger);
-
-const PORT = env.PORT || 3000;
 
 const connectDB = async () => {
   logger.info("Checking database connection...");
