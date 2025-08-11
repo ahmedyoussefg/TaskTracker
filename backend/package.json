@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "cross-env NODE_ENV=test jest --runInBand",
-    "start:dev": "nodemon ./src/index.js\"",
+    "start:dev": "nodemon ./src/index.js",
     "start": "node ./src/index.js",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
@@ -37,6 +37,8 @@
     "pg": "^8.16.3",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
+    "sequelize": "^6.37.7",
+    "sequelize-cli": "^6.6.3",
     "winston": "^3.17.0"
   },
   "devDependencies": {
