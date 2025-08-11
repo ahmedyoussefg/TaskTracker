@@ -8,7 +8,122 @@ const { logger } = require("../../logger");
 const Task = sequelize.models.Task;
 const TaskLog = sequelize.models.TaskLog;
 
-// Create Task
+/**
+ * @openapi
+ * /api/tasks:
+ *   post:
+ *     tags:
+ *       - Tasks
+ *     summary: Create a new task
+ *     description: Create a new task for the authenticated user
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 description: Task title
+ *               description:
+ *                 type: string
+ *                 description: Task description
+ *               estimate:
+ *                 type: number
+ *                 format: float
+ *                 description: Estimated time to complete task
+ *               due_date:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Task due date
+ *               priority:
+ *                 type: string
+ *                 enum: [low, medium, high]
+ *                 description: Task priority level
+ *               status:
+ *                 type: string
+ *                 enum: [todo, in_progress, done]
+ *                 description: Task status
+ *     responses:
+ *       201:
+ *         description: Task created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   format: int64
+ *                 user_id:
+ *                   type: integer
+ *                   format: int64
+ *                 title:
+ *                   type: string
+ *                 description:
+ *                   type: string
+ *                 estimate:
+ *                   type: number
+ *                   format: float
+ *                 due_date:
+ *                   type: string
+ *                   format: date-time
+ *                 priority:
+ *                   type: string
+ *                   enum: [low, medium, high]
+ *                 status:
+ *                   type: string
+ *                   enum: [todo, in_progress, done]
+ *                 created_at:
+ *                   type: string
+ *                   format: date-time
+ *                 updated_at:
+ *                   type: string
+ *                   format: date-time
+ *       400:
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *       401:
+ *         description: Access token missing or invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *       403:
+ *         description: Invalid or expired token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ */
 router.post(
   "/",
   authenticateToken,
@@ -50,7 +165,97 @@ router.post(
   }
 );
 
-// Get all tasks of the user
+/**
+ * @openapi
+ * /api/tasks:
+ *   get:
+ *     tags:
+ *       - Tasks
+ *     summary: Get all tasks
+ *     description: Retrieve all tasks belonging to the authenticated user
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Tasks retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     format: int64
+ *                   user_id:
+ *                     type: integer
+ *                     format: int64
+ *                   title:
+ *                     type: string
+ *                   description:
+ *                     type: string
+ *                   estimate:
+ *                     type: number
+ *                     format: float
+ *                   due_date:
+ *                     type: string
+ *                     format: date-time
+ *                   priority:
+ *                     type: string
+ *                     enum: [low, medium, high]
+ *                   status:
+ *                     type: string
+ *                     enum: [todo, in_progress, done]
+ *                   created_at:
+ *                     type: string
+ *                     format: date-time
+ *                   updated_at:
+ *                     type: string
+ *                     format: date-time
+ *                   totalLoggedTime:
+ *                     type: number
+ *                     format: float
+ *                     description: Total time logged for this task
+ *                   taskLogs:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         day:
+ *                           type: string
+ *                           format: date
+ *                         duration:
+ *                           type: number
+ *                           format: float
+ *       401:
+ *         description: Access token missing or invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *       403:
+ *         description: Invalid or expired token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ */
 router.get("/", authenticateToken, async (req, res) => {
   try {
     const tasks = await Task.findAll({
@@ -86,7 +291,112 @@ router.get("/", authenticateToken, async (req, res) => {
   }
 });
 
-// Get a specific task by ID
+/**
+ * @openapi
+ * /api/tasks/{id}:
+ *   get:
+ *     tags:
+ *       - Tasks
+ *     summary: Get a specific task by ID
+ *     description: Retrieve a specific task belonging to the authenticated user
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Task ID
+ *         schema:
+ *           type: integer
+ *           format: int64
+ *     responses:
+ *       200:
+ *         description: Task retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   format: int64
+ *                 user_id:
+ *                   type: integer
+ *                   format: int64
+ *                 title:
+ *                   type: string
+ *                 description:
+ *                   type: string
+ *                 estimate:
+ *                   type: number
+ *                   format: float
+ *                 due_date:
+ *                   type: string
+ *                   format: date-time
+ *                 priority:
+ *                   type: string
+ *                   enum: [low, medium, high]
+ *                 status:
+ *                   type: string
+ *                   enum: [todo, in_progress, done]
+ *                 created_at:
+ *                   type: string
+ *                   format: date-time
+ *                 updated_at:
+ *                   type: string
+ *                   format: date-time
+ *                 totalLoggedTime:
+ *                   type: number
+ *                   format: float
+ *                   description: Total time logged for this task
+ *                 taskLogs:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       day:
+ *                         type: string
+ *                         format: date
+ *                       duration:
+ *                         type: number
+ *                         format: float
+ *       401:
+ *         description: Access token missing or invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *       403:
+ *         description: Invalid or expired token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *       404:
+ *         description: Task not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ */
 router.get("/:id", authenticateToken, async (req, res) => {
   try {
     const task = await Task.findOne({
@@ -129,7 +439,64 @@ router.get("/:id", authenticateToken, async (req, res) => {
   }
 });
 
-// Delete a task by ID
+/**
+ * @openapi
+ * /api/tasks/{id}:
+ *   delete:
+ *     tags:
+ *       - Tasks
+ *     summary: Delete a task by ID
+ *     description: Delete a specific task belonging to the authenticated user
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Task ID to delete
+ *         schema:
+ *           type: integer
+ *           format: int64
+ *     responses:
+ *       204:
+ *         description: Task deleted successfully (no content)
+ *       401:
+ *         description: Access token missing or invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *       403:
+ *         description: Invalid or expired token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *       404:
+ *         description: Task not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ */
 router.delete("/:id", authenticateToken, async (req, res) => {
   try {
     const deletedCount = await Task.destroy({
@@ -152,7 +519,126 @@ router.delete("/:id", authenticateToken, async (req, res) => {
   }
 });
 
-// Update a task by ID
+/**
+ * @openapi
+ * /api/tasks/{id}:
+ *   patch:
+ *     tags:
+ *       - Tasks
+ *     summary: Update a task by ID
+ *     description: Update specific fields of a task belonging to the authenticated user
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Task ID to update
+ *         schema:
+ *           type: integer
+ *           format: int64
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 description: Task title
+ *               description:
+ *                 type: string
+ *                 description: Task description
+ *               estimate:
+ *                 type: number
+ *                 format: float
+ *                 description: Estimated time to complete task
+ *               due_date:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Task due date
+ *               priority:
+ *                 type: string
+ *                 enum: [low, medium, high]
+ *                 description: Task priority level
+ *               status:
+ *                 type: string
+ *                 enum: [todo, in_progress, done]
+ *                 description: Task status
+ *     responses:
+ *       200:
+ *         description: Task updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   format: int64
+ *                 user_id:
+ *                   type: integer
+ *                   format: int64
+ *                 title:
+ *                   type: string
+ *                 description:
+ *                   type: string
+ *                 estimate:
+ *                   type: number
+ *                   format: float
+ *                 due_date:
+ *                   type: string
+ *                   format: date-time
+ *                 priority:
+ *                   type: string
+ *                   enum: [low, medium, high]
+ *                 status:
+ *                   type: string
+ *                   enum: [todo, in_progress, done]
+ *                 created_at:
+ *                   type: string
+ *                   format: date-time
+ *                 updated_at:
+ *                   type: string
+ *                   format: date-time
+ *       401:
+ *         description: Access token missing or invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *       403:
+ *         description: Invalid or expired token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *       404:
+ *         description: Task not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ */
 router.patch("/:id", authenticateToken, async (req, res) => {
   const { title, description, estimate, due_date, priority, status } = req.body;
 
@@ -187,7 +673,121 @@ router.patch("/:id", authenticateToken, async (req, res) => {
   }
 });
 
-// Log time for a task
+/**
+ * @openapi
+ * /api/tasks/{id}/log-time:
+ *   post:
+ *     tags:
+ *       - Tasks
+ *     summary: Log time for a task
+ *     description: Log time spent on a specific task for a given day
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Task ID to log time for
+ *         schema:
+ *           type: integer
+ *           format: int64
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - duration
+ *             properties:
+ *               duration:
+ *                 type: number
+ *                 format: float
+ *                 minimum: 0.01
+ *                 description: Time duration in hours (must be positive)
+ *               day:
+ *                 type: string
+ *                 format: date
+ *                 description: Date to log time for (defaults to today if not provided)
+ *     responses:
+ *       200:
+ *         description: Time logged successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 log:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       format: int64
+ *                     task_id:
+ *                       type: integer
+ *                       format: int64
+ *                     day:
+ *                       type: string
+ *                       format: date
+ *                     duration:
+ *                       type: number
+ *                       format: float
+ *                     created_at:
+ *                       type: string
+ *                       format: date-time
+ *                     updated_at:
+ *                       type: string
+ *                       format: date-time
+ *       400:
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *       401:
+ *         description: Access token missing or invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *       403:
+ *         description: Invalid or expired token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *       404:
+ *         description: Task not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ */
 router.post(
   "/:id/log-time",
   authenticateToken,
