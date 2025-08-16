@@ -3,6 +3,7 @@ const { sequelize } = require("../../sequelize/models");
 const express = require("express");
 const router = express.Router();
 const { body, validationResult } = require("express-validator");
+const { logger } = require("../../logger");
 
 const Task = sequelize.models.Task;
 const TaskLog = sequelize.models.TaskLog;
@@ -40,7 +41,10 @@ router.post(
 
       res.status(201).json(task);
     } catch (err) {
-      console.error("[ERROR] Create Task:", err.message);
+      logger.error("Create Task error", {
+        message: err.message,
+        stack: err.stack,
+      });
       res.status(500).json({ error: "Internal server error." });
     }
   }
@@ -74,7 +78,10 @@ router.get("/", authenticateToken, async (req, res) => {
 
     res.json(tasks);
   } catch (err) {
-    console.error("[ERROR] Get Tasks:", err.message);
+    logger.error("Create Task error", {
+      message: err.message,
+      stack: err.stack,
+    });
     res.status(500).json({ error: "Internal server error." });
   }
 });
@@ -114,7 +121,10 @@ router.get("/:id", authenticateToken, async (req, res) => {
 
     res.status(200).json(task);
   } catch (err) {
-    console.error("[ERROR] Get Task by ID:", err.message);
+    logger.error("Get Task By ID error", {
+      message: err.message,
+      stack: err.stack,
+    });
     res.status(500).json({ error: "Internal server error." });
   }
 });
@@ -134,7 +144,10 @@ router.delete("/:id", authenticateToken, async (req, res) => {
 
     res.status(204).send();
   } catch (err) {
-    console.error("[ERROR] Delete Task:", err.message);
+    logger.error("Delete Task error", {
+      message: err.message,
+      stack: err.stack,
+    });
     res.status(500).json({ error: "Internal server error." });
   }
 });
@@ -166,7 +179,10 @@ router.patch("/:id", authenticateToken, async (req, res) => {
 
     res.status(200).json(task);
   } catch (err) {
-    console.error("[ERROR] Update Task:", err.message);
+    logger.error("Update Task error", {
+      message: err.message,
+      stack: err.stack,
+    });
     res.status(500).json({ error: "Internal server error." });
   }
 });
@@ -220,7 +236,10 @@ router.post(
         log,
       });
     } catch (err) {
-      console.error("[ERROR] Log Time:", err.message);
+      logger.error("Log Time error", {
+        message: err.message,
+        stack: err.stack,
+      });
       res.status(500).json({ error: "Internal server error." });
     }
   }
