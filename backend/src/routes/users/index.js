@@ -101,8 +101,6 @@ router.post(
       const token = jwt.sign(
         {
           id: loggingUser.id,
-          email: loggingUser.email,
-          username: loggingUser.username,
         },
         env.JWT_KEY,
         {
@@ -110,7 +108,7 @@ router.post(
         }
       );
       res
-        .status(200)
+        .status(201)
         .json({ msg: "User authentication is successful.", token: token });
     } catch (err) {
       console.error("[ERROR] Login error:", err.message);
