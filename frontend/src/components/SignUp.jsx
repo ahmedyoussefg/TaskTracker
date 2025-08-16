@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import config from "../apis/config";
-import axios from "axios";
+import api from "../apis/axios";
+import { useAuth } from "../contexts/useAuth";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -14,6 +14,7 @@ const SignUp = () => {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const { login } = useAuth();
 
   const navigate = useNavigate();
 
@@ -39,8 +40,8 @@ const SignUp = () => {
 
     setLoading(true);
     try {
-      const res = await axios.post(
-        `${config.BASE_API_URL}/users/sign-up`,
+      const res = await api.post(
+        `/users/sign-up`,
         formData
       );
 
@@ -48,6 +49,7 @@ const SignUp = () => {
         const userToken = res.data.token;
         localStorage.setItem("token", userToken);
         setSuccess("Sign-up successful! Redirecting...");
+        login(userToken); // set auth state to true
         setTimeout(() => navigate("/dashboard"), 1500);
       } else {
         const { message } = res.data.message;
