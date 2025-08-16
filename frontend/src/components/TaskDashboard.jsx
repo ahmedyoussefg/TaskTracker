@@ -12,6 +12,11 @@ const TaskDashboard = () => {
   const [selectedTask, setSelectedTask] = useState(null);
   const [viewTask, setViewTask] = useState(null);
   const [deleteTask, setDeleteTask] = useState(null);
+  const [logTask, setLogTask] = useState(null); // For log time modal
+  const [viewLogsTask, setViewLogsTask] = useState(null); // For log history modal
+  const [logDuration, setLogDuration] = useState("");
+  const [logDate, setLogDate] = useState("");
+  const [dateError, setDateError] = useState(""); // in log time modal
 
   const defaultFormData = {
     title: "",
@@ -46,6 +51,32 @@ const TaskDashboard = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+  const handleLogSubmit = async () => {
+    if (new Date(logDate) > new Date()) {
+      setDateError("You can’t log time in the future.");
+      return;
+    }
+    try {
+      await api.post(
+        `/tasks/${logTask.id}/log-time`,
+        {
+          duration: parseFloat(logDuration),
+          day: logDate || new Date().toISOString().split("T")[0],
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      setLogTask(null);
+      setLogDuration("");
+      setLogDate("");
+      setDateError("");
+      fetchTasks();
+    } catch {
+      setError("Logging failed");
+    }
   };
 
   const sanitizeForm = (form) => {
@@ -109,7 +140,13 @@ const TaskDashboard = () => {
 
   const displayStatus = (status) => {
     if (!status) return "TODO";
-    return status.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+    let displayedStatus = status
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (c) => c.toUpperCase());
+    if (displayedStatus === "Todo") {
+      displayedStatus = "To Do";
+    }
+    return displayedStatus;
   };
 
   return (
@@ -220,6 +257,9 @@ const TaskDashboard = () => {
                   <span className="badge bg-light text-dark">
                     Estimate: {task.estimate || 0} hrs
                   </span>
+                  <span className="badge bg-light text-dark">
+                    Total Logged Time: {task.totalLoggedTime || 0} hrs
+                  </span>
                   <span
                     className={`badge ${
                       isPastDue(task.due_date)
@@ -229,8 +269,44 @@ const TaskDashboard = () => {
                   >
                     Due: {formatDate(task.due_date)}
                   </span>
+                  <div className="mt-2 w-100">
+                    <div className="progress" style={{ height: "12px" }}>
+                      <div
+                        className="progress-bar bg-primary"
+                        role="progressbar"
+                        style={{
+                          width: `${
+                            task.estimate
+                              ? Math.min(
+                                  (task.totalLoggedTime / task.estimate) * 100,
+                                  100
+                                )
+                              : 0
+                          }%`,
+                        }}
+                      ></div>
+                      {task.totalLoggedTime > task.estimate && (
+                        <div
+                          className="progress-bar bg-warning"
+                          role="progressbar"
+                          style={{
+                            width: `${
+                              ((task.totalLoggedTime - task.estimate) /
+                                task.estimate) *
+                              100
+                            }%`,
+                          }}
+                        ></div>
+                      )}
+                    </div>
+                    <small className="text-muted">
+                      Logged: {task.totalLoggedTime || 0} hrs / Estimated:{" "}
+                      {task.estimate || 0} hrs
+                    </small>
+                  </div>
                 </div>
               </div>
+
               <div className="d-flex gap-2">
                 <button
                   className="btn btn-sm btn-outline-primary"
@@ -252,6 +328,19 @@ const TaskDashboard = () => {
                   onClick={() => setDeleteTask(task)}
                 >
                   Delete
+                </button>
+                <button
+                  className="btn btn-sm btn-outline-success"
+                  onClick={() => setLogTask(task)}
+                >
+                  Log Time
+                </button>
+
+                <button
+                  className="btn btn-sm btn-outline-dark"
+                  onClick={() => setViewLogsTask(task)}
+                >
+                  History
                 </button>
               </div>
             </div>
@@ -414,6 +503,88 @@ const TaskDashboard = () => {
                 </button>
                 <button className="btn btn-danger" onClick={confirmDeleteTask}>
                   Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {logTask && (
+        <div className="modal fade show d-block" tabIndex="-1">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Log Time for {logTask.title}</h5>
+                <button
+                  className="btn-close"
+                  onClick={() => setLogTask(null)}
+                />
+              </div>
+              <div className="modal-body">
+                <input
+                  type="date"
+                  className="form-control mb-2"
+                  value={logDate}
+                  onChange={(e) => setLogDate(e.target.value)}
+                />
+                <input
+                  type="number"
+                  step="0.1"
+                  className="form-control"
+                  placeholder="Duration (hrs)"
+                  value={logDuration}
+                  onChange={(e) => setLogDuration(e.target.value)}
+                />
+                {dateError && (
+                  <small className="text-danger">{dateError}</small>
+                )}
+              </div>
+              <div className="modal-footer">
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setLogTask(null)}
+                >
+                  Cancel
+                </button>
+                <button className="btn btn-success" onClick={handleLogSubmit}>
+                  Submit
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {viewLogsTask && (
+        <div className="modal fade show d-block" tabIndex="-1">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Time Log History</h5>
+                <button
+                  className="btn-close"
+                  onClick={() => setViewLogsTask(null)}
+                />
+              </div>
+              <div className="modal-body">
+                {viewLogsTask.taskLogs && viewLogsTask.taskLogs.length > 0 ? (
+                  <ul className="list-group">
+                    {viewLogsTask.taskLogs.map((log) => (
+                      <li key={log.day} className="list-group-item">
+                        <strong>{log.day}</strong>: {log.duration} hrs
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No log history found.</p>
+                )}
+              </div>
+              <div className="modal-footer">
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setViewLogsTask(null)}
+                >
+                  Close
                 </button>
               </div>
             </div>
