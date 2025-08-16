@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.belongsTo(models.Task, { foreignKey: "task_id" });
+      this.belongsTo(models.Task, { foreignKey: "task_id", as:"task" });
     }
   }
   TaskLog.init(
@@ -19,12 +19,33 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      task_id: DataTypes.BIGINT,
-      day: DataTypes.DATE,
-      duration: DataTypes.FLOAT,
+      task_id: {
+        type: DataTypes.BIGINT,
+        allowNull: false,
+        validate: {
+          isInt: true,
+        },
+      },
+      day: {
+        type: DataTypes.DATEONLY,
+        allowNull: false,
+        validate: {
+          isDate: true,
+          notNull: { msg: "Day is required" },
+        },
+      },
+      duration: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+        validate: {
+          isFloat: true,
+          notNull: { msg: "Duration is required" },
+        },
+      },
     },
     {
       sequelize,
+      tableName: "tasklogs",
       modelName: "TaskLog",
       underscored: true,
     }
